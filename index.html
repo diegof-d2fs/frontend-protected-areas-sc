@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      try {
+        if (localStorage.getItem("protected-areas-theme-v2") === "light") document.documentElement.classList.remove("dark")
+      } catch {
+        // A preferência explícita só não persiste quando o armazenamento está indisponível.
+      }
+    </script>
+    <title>Protected Areas SC</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

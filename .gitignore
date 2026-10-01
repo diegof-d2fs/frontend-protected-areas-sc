@@ -1,0 +1,35 @@
+# Node / build (quando o scaffold do React entrar)
+node_modules/
+dist/
+.vite/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Saída local de QA (screenshots/snapshots do Playwright MCP)
+.playwright-mcp/
+
+# Config local do Claude Code (pessoal, não compartilhada); `.claude/settings.json` e
+# `.mcp.json` continuam versionados de propósito, para o projeto abrir com os plugins/MCP certos.
+.claude/settings.local.json
+
+# Screenshots avulsos de QA que acabaram salvos em src/assets/ por engano — não são usados por
+# nenhum componente e não são assets reais do produto (logo, ícone etc.).
+src/assets/id_claude.png
+src/assets/print_diego.png
+
+# Configuração local de ferramentas de desenvolvimento
+.claude/
+.mcp.json

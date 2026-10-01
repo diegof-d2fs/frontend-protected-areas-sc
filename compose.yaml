@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: runtime
+    container_name: protected-areas-sc-frontend
+    ports:
+      - "${FRONTEND_PORT:-3005}:80"
+    restart: unless-stopped
+    networks:
+      - pipeline
+
+networks:
+  pipeline:
+    external: true
+    name: airflow_default

@@ -1,0 +1,7 @@
+node_modules
+dist
+.git
+.vite
+docs
+HANDOFF.md
+README.md
