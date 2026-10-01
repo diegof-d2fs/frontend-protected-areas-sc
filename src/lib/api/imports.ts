@@ -214,6 +214,12 @@ export function publishImport(importId: string): Promise<SubmissionView> {
   return apiRequest<SubmissionView>(`/imports/${importId}/publish`, { method: "POST" })
 }
 
+/**
+ * Tempo máximo de acompanhamento automático de uma importação publicada. O processamento é ligado
+ * sob demanda: iniciar a máquina, subir o orquestrador e executar a cadeia de etapas leva minutos.
+ */
+export const IMPORT_POLL_TIMEOUT_MS = 20 * 60 * 1000
+
 export const TERMINAL_STATUSES: readonly SubmissionStatus[] = [
   "SUCCEEDED",
   "FAILED",

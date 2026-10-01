@@ -14,6 +14,7 @@ import { ApiError } from "@/lib/api/client"
 import {
   getImport,
   getImportValidation,
+  IMPORT_POLL_TIMEOUT_MS,
   publishImport,
   replaceBufferAbrangenciaImport,
   TERMINAL_STATUSES,
@@ -30,7 +31,6 @@ const SCENARIO = SCENARIOS.find((scenario) => scenario.id === "uc-cw07")!
 
 const POLL_START_MS = 1500
 const POLL_MAX_MS = 10_000
-const POLL_TIMEOUT_MS = 5 * 60 * 1000
 
 const formSchema = z.object({
   source: z.string().trim().min(1, "Informe a fonte dos dados."),
@@ -114,7 +114,7 @@ export function UcCw07Form() {
         return false
       }
       const elapsed = Date.now() - pollStartedAtRef.current
-      if (elapsed >= POLL_TIMEOUT_MS) {
+      if (elapsed >= IMPORT_POLL_TIMEOUT_MS) {
         return false
       }
       return Math.min(POLL_START_MS + elapsed / 3, POLL_MAX_MS)
@@ -145,7 +145,7 @@ export function UcCw07Form() {
   useEffect(() => {
     if (!isPolling || !current || TERMINAL_STATUSES.includes(current.status)) return
     const elapsed = pollQuery.dataUpdatedAt - pollStartedAtRef.current
-    if (elapsed >= POLL_TIMEOUT_MS) {
+    if (elapsed >= IMPORT_POLL_TIMEOUT_MS) {
       setPollTimedOut(true)
     }
   }, [isPolling, current, pollQuery.dataUpdatedAt])
@@ -258,7 +258,7 @@ export function UcCw07Form() {
 
         {pollTimedOut && (
           <div className="flex items-center justify-between rounded-md border border-warning/40 bg-warning/10 p-3 text-sm text-warning-foreground">
-            <span>Ainda processando. Confira o histórico mais tarde ou atualize agora.</span>
+            <span>O processamento ainda não terminou. Confira o histórico mais tarde ou atualize agora.</span>
             <Button
               type="button"
               variant="outline"
