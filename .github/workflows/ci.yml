@@ -1,0 +1,61 @@
+# Lint e build em todo push e pull request; no main, publica o build no S3 e invalida o CloudFront.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && vars.AWS_DEPLOY_ROLE_ARN != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency: deploy-frontend
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Publicar
+        run: |
+          bucket="s3://${{ vars.FRONTEND_BUCKET }}"
+          # Arquivos com hash no nome podem ficar em cache por um ano; index.html nunca.
+          aws s3 sync dist/assets "$bucket/assets" --cache-control "public, max-age=31536000, immutable" --only-show-errors
+          aws s3 sync dist "$bucket" --exclude "assets/*" --cache-control "no-cache" --delete --only-show-errors
+          aws s3 sync dist/assets "$bucket/assets" --delete --only-show-errors
+
+      - name: Invalidar o cache da borda
+        run: |
+          aws cloudfront create-invalidation --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/index.html" "/" > /dev/null
+          echo "Frontend ${GITHUB_SHA::7} publicado." >> "$GITHUB_STEP_SUMMARY"
