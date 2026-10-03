@@ -1,7 +1,7 @@
 # Frontend — Protected Areas SC
 
 Interface web para operar os cenários de cadastro geoespacial da
-[`protected-areas-sc-api`](https://github.com/diisilva/fast-api-protected-areas-sc) sem depender
+[`protected-areas-sc-api`](https://github.com/diegof-d2fs/fast-api-protected-areas-sc) sem depender
 de Postman/Swagger, com contas nominais (administrador + operador).
 
 ## Funcionalidades
