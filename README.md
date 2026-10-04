@@ -27,8 +27,21 @@ docker compose up -d --build   # http://localhost:3005, com proxy de /api para a
 
 ## Repositórios relacionados
 
-- `protected-areas-sc-api` (FastAPI, backend REST + autenticação nova).
-- `pipeline-protected-areas-sc` (Airflow, pipelines Medallion e publicação PostGIS).
+- [fast-api-protected-areas-sc](https://github.com/diegof-d2fs/fast-api-protected-areas-sc) (FastAPI, backend REST + autenticação).
+- [pipeline-protected-areas-sc](https://github.com/diegof-d2fs/pipeline-protected-areas-sc) (Airflow, pipelines Medallion e publicação PostGIS).
 
 Este repositório entra na mesma rede Docker externa `pipeline` que os outros dois já usam, como
 um serviço a mais (ver `docs/SDD.md`, seção 4).
+
+
+## CI/CD na AWS
+
+O workflow [.github/workflows/ci.yml](.github/workflows/ci.yml) executa lint e build em
+pushes no main e pull requests. Depois do build, um push no main publica o artefato dist
+no bucket do frontend e invalida o cache do CloudFront.
+
+Variáveis de repositório exigidas: AWS_DEPLOY_ROLE_ARN, FRONTEND_BUCKET e
+CLOUDFRONT_DISTRIBUTION_ID. O papel vem do módulo ci da infraestrutura e recebe
+credenciais temporárias por GitHub OIDC, com confiança restrita a este repositório
+na branch main. index.html é publicado sem cache; os assets com hash usam cache
+imutável. A publicação é conferida em https://areasprotegidas-sc.com.
