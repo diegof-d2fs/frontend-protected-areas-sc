@@ -10,6 +10,7 @@ import {
   Map as MapIcon,
   RefreshCw,
   Search,
+  Wrench,
 } from "lucide-react"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -499,40 +500,62 @@ function FormatsTab({ dictionary }: { dictionary: DataDictionary }) {
   )
 }
 
+// Lista em vez de tabela: os códigos chegam a 45 caracteres e, numa tabela de quatro colunas,
+// empurravam "Como corrigir" para fora da área visível. Agrupar por etapa também elimina a coluna
+// de etapa e deixa o significado e a correção lado a lado, empilhados no celular.
 function ErrorsTab({ errors }: { errors: DictionaryError[] }) {
   if (errors.length === 0) {
     return <p className="text-sm text-muted-foreground">Nenhum erro corresponde à busca.</p>
   }
+  const stages = [...new Set(errors.map((error) => error.stage))]
   return (
-    <div className="rounded-lg border border-border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Código</TableHead>
-            <TableHead>Etapa</TableHead>
-            <TableHead className="min-w-56">O que significa</TableHead>
-            <TableHead className="min-w-56">Como corrigir</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {errors.map((error) => (
-            <TableRow key={error.code} className="align-top">
-              <TableCell className="whitespace-nowrap">
-                <Code className="text-[0.75rem]">{error.code}</Code>
-              </TableCell>
-              <TableCell>
-                <Badge variant="secondary">{STAGE_LABEL[error.stage] ?? error.stage}</Badge>
-              </TableCell>
-              <TableCell className="whitespace-normal text-sm">
-                <RichText text={error.meaning} />
-              </TableCell>
-              <TableCell className="whitespace-normal text-sm text-muted-foreground">
-                <RichText text={error.fix} />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="flex flex-col gap-6">
+      {stages.map((stage) => {
+        const items = errors.filter((error) => error.stage === stage)
+        return (
+          <section key={stage} className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-foreground">{STAGE_LABEL[stage] ?? stage}</h3>
+              <Badge variant="secondary">{items.length}</Badge>
+            </div>
+            <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
+              {items.map((error) => (
+                <li key={error.code} className="flex flex-col gap-2 px-4 py-3">
+                  <span className="flex items-start gap-1">
+                    <Code className="font-medium break-all">{error.code}</Code>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      aria-label={`Copiar ${error.code}`}
+                      onClick={() => copy(error.code, `Código ${error.code}`)}
+                    >
+                      <Copy aria-hidden="true" />
+                    </Button>
+                  </span>
+                  <div className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-xs font-medium text-muted-foreground">O que significa</span>
+                      <p className="text-foreground">
+                        <RichText text={error.meaning} />
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-xs font-medium text-muted-foreground">Como corrigir</span>
+                      <p className="flex gap-1.5 text-foreground">
+                        <Wrench className="mt-0.5 size-3.5 shrink-0 text-primary" aria-hidden="true" />
+                        <span>
+                          <RichText text={error.fix} />
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      })}
     </div>
   )
 }
