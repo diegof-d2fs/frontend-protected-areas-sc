@@ -217,8 +217,11 @@ export function publishImport(importId: string): Promise<SubmissionView> {
 /**
  * Tempo máximo de acompanhamento automático de uma importação publicada. O processamento é ligado
  * sob demanda: iniciar a máquina, subir o orquestrador e executar a cadeia de etapas leva minutos.
+ * Na carga de referência medida na AWS, uma UC nova levou cerca de 29 minutos até o fim dos temas e
+ * 71 minutos quando o MapBiomas gerou pela primeira vez a Silver de anos ainda ausentes; 90 minutos
+ * cobrem os dois casos. A consulta espaça até 10 s, então o prazo maior custa poucas requisições.
  */
-export const IMPORT_POLL_TIMEOUT_MS = 20 * 60 * 1000
+export const IMPORT_POLL_TIMEOUT_MS = 90 * 60 * 1000
 
 export const TERMINAL_STATUSES: readonly SubmissionStatus[] = [
   "SUCCEEDED",
