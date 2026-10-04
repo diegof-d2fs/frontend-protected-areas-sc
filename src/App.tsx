@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { AdminDashboardPage } from "@/pages/AdminDashboardPage"
+import { DicionarioDadosPage } from "@/pages/DicionarioDadosPage"
 import { HistoricoPage } from "@/pages/HistoricoPage"
 import { ImportDetailPage } from "@/pages/ImportDetailPage"
 import { LoginPage } from "@/pages/LoginPage"
@@ -36,6 +37,7 @@ function AppRoutes() {
           <Route path="/cenarios/:scenarioSlug" element={<ScenarioDetailPage />} />
           <Route path="/historico" element={<HistoricoPage />} />
           <Route path="/historico/:importId" element={<ImportDetailPage />} />
+          <Route path="/dicionario-dados" element={<DicionarioDadosPage />} />
           <Route element={<RequireAdmin />}>
             <Route path="/admin" element={<AdminDashboardPage />} />
           </Route>

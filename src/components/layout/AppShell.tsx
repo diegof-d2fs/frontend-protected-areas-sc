@@ -1,4 +1,4 @@
-import { ClipboardList, History, LogOut, ShieldCheck } from "lucide-react"
+import { BookOpen, ClipboardList, History, LogOut, ShieldCheck } from "lucide-react"
 import { NavLink, Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext"
 const NAV_ITEMS = [
   { to: "/cenarios", label: "Cenários", icon: ClipboardList },
   { to: "/historico", label: "Histórico", icon: History },
+  { to: "/dicionario-dados", label: "Dicionário de dados", icon: BookOpen },
 ]
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
