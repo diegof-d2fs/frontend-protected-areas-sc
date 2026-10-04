@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardList, History, LogOut, ShieldCheck } from "lucide-react"
+import { BookOpen, ClipboardList, History, LogOut, ShieldCheck, Zap } from "lucide-react"
 import { NavLink, Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -38,6 +38,12 @@ export function AppShell() {
             <NavLink to="/admin" className={navLinkClassName}>
               <ShieldCheck className="size-4" aria-hidden="true" />
               Administração
+            </NavLink>
+          )}
+          {user?.role === "admin" && (
+            <NavLink to="/admin/modo-eventos" className={navLinkClassName}>
+              <Zap className="size-4" aria-hidden="true" />
+              Modo eventos
             </NavLink>
           )}
         </nav>

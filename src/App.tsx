@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { AdminDashboardPage } from "@/pages/AdminDashboardPage"
 import { DicionarioDadosPage } from "@/pages/DicionarioDadosPage"
 import { HistoricoPage } from "@/pages/HistoricoPage"
+import { ModoEventosPage } from "@/pages/ModoEventosPage"
 import { ImportDetailPage } from "@/pages/ImportDetailPage"
 import { LoginPage } from "@/pages/LoginPage"
 import { ScenarioDetailPage } from "@/pages/ScenarioDetailPage"
@@ -40,6 +41,7 @@ function AppRoutes() {
           <Route path="/dicionario-dados" element={<DicionarioDadosPage />} />
           <Route element={<RequireAdmin />}>
             <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/modo-eventos" element={<ModoEventosPage />} />
           </Route>
         </Route>
       </Route>
