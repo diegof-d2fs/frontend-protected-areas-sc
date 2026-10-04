@@ -275,8 +275,8 @@ function BaseDetail({ base, query }: { base: DictionaryBase; query: string }) {
                         <Code className="font-medium">{field.name}</Code>
                         <span className="text-xs text-muted-foreground">
                           {field.type}
-                          {field.max_length != null && ` · até ${field.max_length} caracteres`}
-                          {field.minimum != null && ` · mínimo ${field.minimum}`}
+                          {field.max_length != null && `, até ${field.max_length} caracteres`}
+                          {field.minimum != null && `, mínimo ${field.minimum}`}
                         </span>
                         <Badge
                           variant="outline"
