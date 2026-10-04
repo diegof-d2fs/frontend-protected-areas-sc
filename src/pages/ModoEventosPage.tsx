@@ -519,6 +519,27 @@ function CopyField({ label, value, secret = false }: { label: string; value: str
   )
 }
 
+// Os serviços de mapa não têm senha: se o QGIS enviar usuário e senha, o GeoServer tenta validá-los
+// e responde 401. Por isso eles ficam num bloco separado das credenciais, que valem só para o banco.
+function MapServices() {
+  const base = `${window.location.origin}/geoserver/protected_areas_sc`
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="flex items-start gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+        <AlertTriangle className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+        Os serviços de mapa são abertos. No QGIS, deixe a autenticação em branco: o usuário e a senha do banco não
+        valem aqui e fazem o servidor recusar a conexão.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <CopyField label="WMS (mapas)" value={`${base}/wms`} />
+        <CopyField label="WMTS (mapas em cache, mais rápidos)" value={`${base}/gwc/service/wmts`} />
+        <CopyField label="WFS (feições para análise)" value={`${base}/wfs`} />
+        <CopyField label="WCS (raster MapBiomas)" value={`${base}/wcs`} />
+      </div>
+    </div>
+  )
+}
+
 function Credentials({ event }: { event: EventView }) {
   const [credentials, setCredentials] = useState<EventCredentials | null>(null)
   const mutation = useMutation({
@@ -527,28 +548,30 @@ function Credentials({ event }: { event: EventView }) {
     onError: (error) => toast.error(errorMessage(error)),
   })
 
-  if (!credentials) {
-    return (
-      <div className="flex flex-col items-start gap-2">
-        <p className="text-sm text-muted-foreground">
-          Login somente leitura para distribuir aos participantes (QGIS e Power BI). Cada consulta fica registrada.
-        </p>
-        <Button type="button" variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate()}>
-          <Eye aria-hidden="true" />
-          Mostrar dados de acesso
-        </Button>
-      </div>
-    )
-  }
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <CopyField label="Servidor do banco" value={`${credentials.db_host}:${credentials.db_port}`} />
-      <CopyField label="Banco" value={credentials.db_name} />
-      <CopyField label="Usuário" value={credentials.db_login} />
-      <CopyField label="Senha" value={credentials.db_password} secret />
-      <div className="sm:col-span-2">
-        <CopyField label="Serviços de mapa (WMS, WFS e WCS)" value={credentials.ogc_base_url} />
-      </div>
+    <div className="flex flex-col gap-3">
+      <p className="text-sm text-muted-foreground">
+        Login somente leitura para o QGIS (conexão PostgreSQL), o DBeaver e o Power BI, com SSL obrigatório. Ele
+        enxerga só as views do esquema reporting e deixa de existir quando o modo eventos é desativado. Cada
+        consulta destes dados fica registrada.
+      </p>
+      {credentials ? (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <CopyField label="Servidor" value={credentials.db_host} />
+          <CopyField label="Porta" value={String(credentials.db_port)} />
+          <CopyField label="Banco" value={credentials.db_name} />
+          <CopyField label="Modo SSL" value="require" />
+          <CopyField label="Usuário" value={credentials.db_login} />
+          <CopyField label="Senha" value={credentials.db_password} secret />
+        </div>
+      ) : (
+        <div>
+          <Button type="button" variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate()}>
+            <Eye aria-hidden="true" />
+            Mostrar dados de acesso ao banco
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
@@ -605,7 +628,12 @@ function ActiveEvent({ event, rules, onChanged }: { event: EventView; rules: Eve
         </div>
 
         <section className="flex flex-col gap-3">
-          <h3 className="text-sm font-semibold">Acesso para os participantes</h3>
+          <h3 className="text-sm font-semibold">Serviços de mapa, sem senha</h3>
+          <MapServices />
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <h3 className="text-sm font-semibold">Banco de dados para os participantes</h3>
           <Credentials event={event} />
         </section>
 
