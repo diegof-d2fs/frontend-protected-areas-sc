@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { apiRequest } from "@/lib/api/client"
 import { getImport, publishImport, searchUcs, TERMINAL_STATUSES, type SubmissionView, type UcSearchResult } from "@/lib/api/imports"
-import { localImportHistory } from "@/lib/history/localImportHistory"
 import { ImportStatusPanel } from "./ImportStatusPanel"
 
 export function UcCw05Form() {
@@ -26,9 +25,6 @@ export function UcCw05Form() {
     refetchInterval: (query) => query.state.data && TERMINAL_STATUSES.includes(query.state.data.status) ? false : 5000,
   })
   const current = poll.data ?? submission
-  useEffect(() => {
-    if (current) localImportHistory.record("UC-CW05", "Extinguir unidade de conservação", current)
-  }, [current])
 
   async function search() {
     setBusy(true)

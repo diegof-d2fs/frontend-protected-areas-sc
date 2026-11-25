@@ -176,7 +176,7 @@ são os mesmos que a Fase 2 vai usar de verdade — só a fonte da sessão muda.
 | FE-RF-07 | Cada formulário de cenário deve validar no cliente os campos obrigatórios do contrato antes de habilitar o envio. | 1 e 2 |
 | FE-RF-08 | O sistema deve gerar a `Idempotency-Key` automaticamente uma vez por tentativa de envio (não a cada clique de "enviar"); reenviar a mesma tentativa depois de uma falha reaproveita a mesma chave e o mesmo arquivo; só escolher um arquivo novo ou reiniciar o formulário gera uma chave nova (ver SDD, 3.3). | 1 e 2 |
 | FE-RF-09 | Após o envio, o sistema acompanha o estado da importação por polling (intervalo inicial 1,5s, backoff até 10s, teto de 5 minutos) até um estado terminal ou até o teto; ao atingir o teto, para de atualizar sozinho, mostra aviso e mantém a importação visível no histórico para conferência manual. | 1 e 2 |
-| FE-RF-10 | O sistema mantém, por usuário, um histórico local das últimas importações enviadas (US-12). | 1 (sessão do navegador) / 2 (persistido por usuário) |
+| FE-RF-10 | O sistema mostra, por conta, o histórico das importações enviadas, lido da API (`GET /api/v1/imports`) e igual em qualquer aba, navegador ou dia (US-12). | 1 (sessão do navegador) / 2 (persistido por usuário, implementado) |
 | FE-RF-11 | Erros da API em `application/problem+json` devem ser mapeados para mensagens em português, com fallback genérico para códigos não mapeados. | 1 e 2 |
 
 ## 8. Requisitos não funcionais

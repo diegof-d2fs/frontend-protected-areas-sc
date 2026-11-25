@@ -388,9 +388,9 @@ conta contra um array em memória (`LocalMockUserRepository`); na Fase 2, contra
 /cenarios/:scenarioSlug          ScenarioDetailPage    (guarda: autenticado; slugs descritivos)
   ├─ cenário ativo: formulário de envio, ImportStatusPanel e o resumo de validação do arquivo
   └─ cenário desabilitado: o mesmo motivo do cartão, numa tela própria (não só um tooltip)
-/historico                       HistoricoPage         (Fase 1: local · Fase 2: persistido)
-  └─ lista de importações desta navegação, com o status mais recente já confirmado contra a API
-     (não só o que a tela de origem tinha guardado por último)
+/historico                       HistoricoPage         (persistido na API, por conta)
+  └─ importações da conta, paginadas pela API, com o status das ainda em andamento confirmado
+     por GET /imports/{id}
 /historico/:importId            ImportDetailPage      (guarda: autenticado)
   └─ acompanhamento de uma importação específica (ImportStatusPanel e o resumo de validação),
      acessível tanto pela lista de histórico quanto por link direto
@@ -408,14 +408,14 @@ resposta definitiva e visível — "essa importação não existe" — em vez de
 indefinidamente: a página distingue um 404 (para de repetir a consulta e mostra a mensagem) de uma
 falha passageira de rede (tenta mais algumas vezes antes de desistir).
 
-`localImportHistory` (Fase 1) segue o mesmo padrão de armazenamento do `LocalMockAuthDriver`: grava
-em `sessionStorage`, não em memória e não em `localStorage`, pelo mesmo motivo (sobreviver a uma
-atualização de página sem virar um armazenamento persistente entre aberturas do navegador). Como o
-que fica salvo é só o retorno já público da própria API (identificador, nome de arquivo, status),
-essa escolha não carrega o mesmo cuidado de dado sensível do driver de autenticação. A lista em
-`HistoricoPage` nunca confia cegamente nesse retrato salvo: toda importação ainda não terminal é
-reconsultada diretamente na API (`useQueries`, um `GET /imports/{id}` por item pendente) para que o
-status mostrado nunca fique mais desatualizado do que o da própria API.
+O histórico vem da API (`GET /api/v1/imports`), que filtra pelo `actor_id` gravado da sessão em
+cada importação e esconde os membros de um lote UC+ZA (o lote aparece uma vez). O histórico da Fase 1,
+guardado no `sessionStorage` da aba, sumia ao fechar a aba, ao abrir o site em outra ou ao voltar
+depois de a sessão expirar, e foi removido. O cenário de cada linha é derivado do domínio, da
+operação e dos tipos geométricos validados (`scenarioForSubmission`): um `uc/create` só de pontos é
+`UC-CW02`. A listagem devolve o estado gravado na última consulta, então toda importação ainda não
+terminal é reconsultada na API (`useQueries`, um `GET /imports/{id}` por item pendente), que é a
+chamada que avança o estado a partir do Airflow.
 
 `RequireAuth` e `RequireAdmin` checam `AuthContext`; sem sessão (mock ou real), redireciona para
 `/login`. Não há "modo convidado": tudo além de `/login` exige sessão (PRD, `FE-RF-01`).

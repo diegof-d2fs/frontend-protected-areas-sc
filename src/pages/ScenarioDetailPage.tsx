@@ -14,8 +14,8 @@ import { SCENARIOS } from "@/lib/scenarios"
 // formulário de `uc/create` (só muda a geometria esperada, validada pela API); os demais têm
 // tela própria porque o contrato de metadados é diferente.
 const SCENARIO_FORMS: Record<string, () => ReactElement> = {
-  "uc-cw01": () => <UcCreateForm scenarioId="uc-cw01" />,
-  "uc-cw02": () => <UcCreateForm scenarioId="uc-cw02" />,
+  "uc-cw01": () => <UcCreateForm />,
+  "uc-cw02": () => <UcCreateForm />,
   "uc-cw03": () => <UcCw03Form />,
   "uc-cw04": () => <UcCw04Form />,
   "uc-cw05": () => <UcCw05Form />,

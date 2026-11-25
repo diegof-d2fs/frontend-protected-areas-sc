@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { apiRequest } from "@/lib/api/client"
 import { TERMINAL_STATUSES, type SubmissionView } from "@/lib/api/imports"
-import { localImportHistory } from "@/lib/history/localImportHistory"
 import { ImportStatusPanel } from "./ImportStatusPanel"
 
 interface BatchView extends SubmissionView { batch_id: string }
@@ -26,9 +25,6 @@ export function UcCw03Form() {
     refetchInterval: (query) => query.state.data && TERMINAL_STATUSES.includes(query.state.data.status) ? false : 5000,
   })
   const current = poll.data ?? batch
-  useEffect(() => {
-    if (current) localImportHistory.record("UC-CW03", "Cadastrar UC com ZA oficial", current)
-  }, [current])
 
   async function validate() {
     if (!ucFile || !zoneFile) return
