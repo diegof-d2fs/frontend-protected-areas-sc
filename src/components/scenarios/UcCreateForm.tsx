@@ -22,8 +22,6 @@ import {
   type ValidationReport,
 } from "@/lib/api/imports"
 import { translateErrorCode } from "@/lib/errorMessages"
-import { localImportHistory } from "@/lib/history/localImportHistory"
-import { SCENARIOS } from "@/lib/scenarios"
 import { FileValidationSummary } from "./FileValidationSummary"
 import { ImportStatusPanel } from "./ImportStatusPanel"
 
@@ -42,10 +40,8 @@ type FormValues = z.infer<typeof formSchema>
  * Formulário de `uc/create`, compartilhado por `UC-CW01` (polígono) e `UC-CW02` (ponto): o
  * contrato da API é o mesmo lote de uma ou várias features para as duas operações — só o motivo
  * do cartão na grade de cenários muda o tipo de geometria esperado, a API valida isso sozinha.
- * `scenarioId` decide só qual cenário fica registrado no histórico local desta importação.
  */
-export function UcCreateForm({ scenarioId }: { scenarioId: string }) {
-  const scenario = SCENARIOS.find((item) => item.id === scenarioId)!
+export function UcCreateForm() {
 
   const [file, setFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -138,11 +134,6 @@ export function UcCreateForm({ scenarioId }: { scenarioId: string }) {
   // ativo; `submission` só existe para guardar o resultado do envio/publicação entre as
   // chamadas e sobreviver depois que o polling para.
   const current = pollQuery.data ?? submission
-
-  useEffect(() => {
-    if (!current) return
-    localImportHistory.record(scenario.code, scenario.title, current)
-  }, [current, scenario.code, scenario.title])
 
   const notifiedTerminalRef = useRef<string | null>(null)
   useEffect(() => {

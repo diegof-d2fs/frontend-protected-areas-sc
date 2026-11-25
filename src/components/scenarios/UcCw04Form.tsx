@@ -27,8 +27,6 @@ import {
   type ValidationReport,
 } from "@/lib/api/imports"
 import { translateErrorCode } from "@/lib/errorMessages"
-import { localImportHistory } from "@/lib/history/localImportHistory"
-import { SCENARIOS } from "@/lib/scenarios"
 import { FileValidationSummary } from "./FileValidationSummary"
 import { ImportStatusPanel } from "./ImportStatusPanel"
 
@@ -51,7 +49,6 @@ interface UcCw04FormProps {
 
 export function UcCw04Form({ operation = "update" }: UcCw04FormProps) {
   const isReplacePoint = operation === "replace_point"
-  const scenario = SCENARIOS.find((item) => item.id === (isReplacePoint ? "uc-cw06" : "uc-cw04"))!
   const [file, setFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const [target, setTarget] = useState<SelectedTarget | null>(null)
@@ -149,11 +146,6 @@ export function UcCw04Form({ operation = "update" }: UcCw04FormProps) {
   })
 
   const current = pollQuery.data ?? submission
-
-  useEffect(() => {
-    if (!current) return
-    localImportHistory.record(scenario.code, scenario.title, current)
-  }, [current, scenario.code, scenario.title])
 
   const notifiedTerminalRef = useRef<string | null>(null)
   useEffect(() => {

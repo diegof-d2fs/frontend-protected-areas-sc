@@ -6,7 +6,7 @@ import { ImportStatusPanel } from "@/components/scenarios/ImportStatusPanel"
 import { Card, CardContent } from "@/components/ui/card"
 import { ApiError } from "@/lib/api/client"
 import { getImport, getImportValidation, TERMINAL_STATUSES } from "@/lib/api/imports"
-import { localImportHistory } from "@/lib/history/localImportHistory"
+import { scenarioForSubmission } from "@/lib/history/scenarioForSubmission"
 import { translateErrorCode } from "@/lib/errorMessages"
 
 const POLL_START_MS = 1500
@@ -14,7 +14,6 @@ const POLL_MAX_MS = 10_000
 
 export function ImportDetailPage() {
   const { importId } = useParams<{ importId: string }>()
-  const historyEntry = importId ? localImportHistory.get(importId) : undefined
 
   const importQuery = useQuery({
     queryKey: ["import", importId],
@@ -43,6 +42,7 @@ export function ImportDetailPage() {
   }
 
   const submission = importQuery.data
+  const scenario = submission ? scenarioForSubmission(submission) : undefined
 
   return (
     <div className="flex flex-col gap-4">
@@ -55,12 +55,8 @@ export function ImportDetailPage() {
       </Link>
 
       <div>
-        {historyEntry && (
-          <span className="font-mono text-xs text-muted-foreground">{historyEntry.scenarioCode}</span>
-        )}
-        <h1 className="text-lg font-semibold text-foreground">
-          {historyEntry?.scenarioTitle ?? "Importação"}
-        </h1>
+        {scenario && <span className="font-mono text-xs text-muted-foreground">{scenario.code}</span>}
+        <h1 className="text-lg font-semibold text-foreground">{scenario?.title ?? "Importação"}</h1>
         {submission && (
           <p className="font-mono text-xs text-muted-foreground">{submission.original_filename}</p>
         )}

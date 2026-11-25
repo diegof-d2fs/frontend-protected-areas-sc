@@ -22,12 +22,9 @@ import {
   type ValidationReport,
 } from "@/lib/api/imports"
 import { translateErrorCode } from "@/lib/errorMessages"
-import { localImportHistory } from "@/lib/history/localImportHistory"
-import { SCENARIOS } from "@/lib/scenarios"
 import { FileValidationSummary } from "./FileValidationSummary"
 import { ImportStatusPanel } from "./ImportStatusPanel"
 
-const SCENARIO = SCENARIOS.find((scenario) => scenario.id === "uc-cw07")!
 
 const POLL_START_MS = 1500
 const POLL_MAX_MS = 10_000
@@ -122,11 +119,6 @@ export function UcCw07Form() {
   })
 
   const current = pollQuery.data ?? submission
-
-  useEffect(() => {
-    if (!current) return
-    localImportHistory.record(SCENARIO.code, SCENARIO.title, current)
-  }, [current])
 
   const notifiedTerminalRef = useRef<string | null>(null)
   useEffect(() => {

@@ -26,6 +26,7 @@ export interface SubmissionView {
   error_detail: string | null
   duplicate_matches: Record<string, unknown>[]
   batch_items: Record<string, unknown>[]
+  geometry_types: string[]
   created_at: string
   updated_at: string
   links: Record<string, string>
@@ -204,6 +205,19 @@ export function replaceBufferAbrangenciaImport(input: ReplaceBufferAbrangenciaIm
 
 export function getImport(importId: string): Promise<SubmissionView> {
   return apiRequest<SubmissionView>(`/imports/${importId}`)
+}
+
+export interface ImportHistoryPage {
+  items: SubmissionView[]
+  limit: number
+  offset: number
+  has_more: boolean
+}
+
+/** Histórico da conta da sessão, guardado na API: o mesmo em qualquer aba, navegador ou dia. */
+export function listMyImports(limit: number, offset: number): Promise<ImportHistoryPage> {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) })
+  return apiRequest<ImportHistoryPage>(`/imports?${params}`)
 }
 
 export function getImportValidation(importId: string): Promise<ValidationReport> {
