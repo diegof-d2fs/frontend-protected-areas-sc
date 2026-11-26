@@ -58,7 +58,10 @@ export function ImportDetailPage() {
         {scenario && <span className="font-mono text-xs text-muted-foreground">{scenario.code}</span>}
         <h1 className="text-lg font-semibold text-foreground">{scenario?.title ?? "Importação"}</h1>
         {submission && (
-          <p className="font-mono text-xs text-muted-foreground">{submission.original_filename}</p>
+          <p className="font-mono text-xs text-muted-foreground">
+            {submission.original_filename}
+            {submission.submitted_by && <span className="font-sans"> · enviado por {submission.submitted_by}</span>}
+          </p>
         )}
       </div>
 

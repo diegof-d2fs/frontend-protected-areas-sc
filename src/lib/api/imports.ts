@@ -26,6 +26,7 @@ export interface SubmissionView {
   error_detail: string | null
   duplicate_matches: Record<string, unknown>[]
   batch_items: Record<string, unknown>[]
+  submitted_by: string | null
   geometry_types: string[]
   created_at: string
   updated_at: string
@@ -214,9 +215,18 @@ export interface ImportHistoryPage {
   has_more: boolean
 }
 
-/** Histórico da conta da sessão, guardado na API: o mesmo em qualquer aba, navegador ou dia. */
-export function listMyImports(limit: number, offset: number): Promise<ImportHistoryPage> {
-  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) })
+export type ImportHistoryScope = "mine" | "all"
+
+/**
+ * Histórico guardado na API: o mesmo em qualquer aba, navegador ou dia. `mine` traz a conta da
+ * sessão; `all` traz todas as contas e só é aceito para administradores.
+ */
+export function listMyImports(
+  limit: number,
+  offset: number,
+  scope: ImportHistoryScope = "mine",
+): Promise<ImportHistoryPage> {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset), scope })
   return apiRequest<ImportHistoryPage>(`/imports?${params}`)
 }
 
